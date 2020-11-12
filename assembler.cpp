@@ -253,7 +253,7 @@ int main()
             string error="ERROR:Undeclared label";
             errors.pb(error);
         }
-    printlabel(symtab);
+    /*printlabel(symtab);
     printlit(litab);
-    printerror(errors);
+    printerror(errors);*/
 }
