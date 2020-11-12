@@ -256,4 +256,6 @@ int main()
     /*printlabel(symtab);
     printlit(litab);
     printerror(errors);*/
+    if(1)
+        cout<<"YES"<<endl;
 }
