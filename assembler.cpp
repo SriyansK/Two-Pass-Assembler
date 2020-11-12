@@ -256,6 +256,11 @@ int main()
     /*printlabel(symtab);
     printlit(litab);
     printerror(errors);*/
-    if(1)
-        cout<<"YES"<<endl;
+    if(0)
+        cout<<"NO";
+    else
+    {
+        cout<<"LIL"<<endl;
+    }
+    
 }
