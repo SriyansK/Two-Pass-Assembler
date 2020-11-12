@@ -26,7 +26,7 @@ int current_line=0,literal_counter=10000;
 
 
 /*
-    correct literals according to mnemonic and perfect the location counter
+    correct literals according to mnemonic and perfect the location counter.
 */
 
 bool islabel(string label)
