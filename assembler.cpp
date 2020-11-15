@@ -12,7 +12,7 @@ using namespace std;
 int pos;
 int current_line=0,literal_counter=10000,PC=0;
 
-//correct PC and line counter and convert to decimal 
+//convert to decimal 
 
 bool islabel(string label)
 {
