@@ -71,6 +71,15 @@ string sep(string s)
 
 bool isdigits(string temp)
 {
+    if(temp[0] == '0' && temp[1]== 'x')
+    {
+        for(int i=2;i<temp.length();i++)
+            if(isdigit(temp[i])||(temp[i]<='f' && temp[i]>='a')||(temp[i]<='F' && temp[i]>='A'))
+                continue;
+            else
+                return false;
+        return true;
+    }
     for(char c:temp)
         if(!isdigit(c))
             return false;
@@ -80,7 +89,7 @@ bool isdigits(string temp)
 int main()
 {
     fstream input_file;
-    input_file.open("test3.txt",ios::in);
+    input_file.open("test1.asm",ios::in);
 
     vector <string> code; // remove bogus lines and comments and store it in code
     vector <string> errors; //stores the errors
@@ -261,4 +270,12 @@ int main()
         {
             string error="ERROR:Undeclared label";errors.pb(error);
         }
+    cout<<"symbol table"<<endl;
+    for(auto it:symtab)
+        cout<<it.first<<" "<<it.second<<endl;
+    for(auto it:errors)
+        cout<<it<<endl;
+    cout<<"literal table"<<endl;
+    for(auto it:litab)
+        cout<<it.first<<" "<<it.second<<endl;
 }
