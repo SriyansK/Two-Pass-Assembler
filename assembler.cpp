@@ -10,7 +10,9 @@
 using namespace std;
 
 int pos;
-int current_line=0,literal_counter=10000;
+int current_line=0,literal_counter=10000,PC=0;
+
+//correct PC and line counter and convert to decimal 
 
 bool islabel(string label)
 {
@@ -89,7 +91,7 @@ bool isdigits(string temp)
 int main()
 {
     fstream input_file;
-    input_file.open("test1.asm",ios::in);
+    input_file.open("test3.asm",ios::in);
 
     vector <string> code; // remove bogus lines and comments and store it in code
     vector <string> errors; //stores the errors
@@ -105,8 +107,6 @@ int main()
                     break;
                 s+=c;
             }
-            if(s=="")
-                continue;
             code.pb(s);
             cout<<temp<<endl;
         }
@@ -132,17 +132,22 @@ int main()
     {
         pos=0;
         string temp=sep(s);
+        if(temp=="")
+        {
+            current_line++;
+            continue;
+        }
         if(islabel(temp)) //If label the 1st string is a label
         {
             if(symtab.find(temp)==symtab.end()) // Here we add labels to symbol table
-                symtab[temp]=current_line;
+                symtab[temp]=PC;
             else if(symtab.find(temp)!=symtab.end() && symtab[temp]!=-1)
             {
-                string error="ERROR:Label Repeated at line "; error+=current_line+'0';
+                string error="ERROR:Label Repeated at line "; error+=to_string(current_line);
                 errors.pb(error);
             }
             else if(symtab.find(temp)!=symtab.end() && symtab[temp]==-1)
-                symtab[temp]=current_line; // Here adding conditions end
+                symtab[temp]=PC; // Here adding conditions end
             
             temp="";temp=sep(s); // here we check 2nd string
             if(temp.length()==0)
@@ -157,9 +162,9 @@ int main()
                 string temp1="";temp1=sep(s);
                 if(temp1.length()>0) 
                 {
-                    string error="ERROR:Extra operand at line "; error+=current_line+'0';
+                    string error="ERROR:Extra operand at line "; error+=to_string(current_line);
                     errors.pb(error);
-                    current_line++;
+                    current_line++;PC++;
                     continue;
                 } // Here checking ends
 
@@ -167,9 +172,9 @@ int main()
                 {
                     if(temp.length()>0)
                     {
-                        string error="ERROR:Extra Operand at line "; error+=current_line+'0';
+                        string error="ERROR:Extra Operand at line "; error+=to_string(current_line);
                         errors.pb(error);
-                        current_line++;
+                        current_line++;PC++;
                         continue;
                     }
                 }
@@ -177,33 +182,33 @@ int main()
                 {
                     if(temp.length()==0)
                     {
-                        string error="ERROR:Missing operand at line "; error+=current_line+'0';
+                        string error="ERROR:Missing operand at line "; error+=to_string(current_line);
                         errors.pb(error);
                     }
                     else if(islabel(temp))
                     {
-                        string error="ERROR:Label declared after mnemonic"; error+=current_line+'0';
+                        string error="ERROR:Label declared after mnemonic"; error+=to_string(current_line);
                         errors.pb(error);
                     }
                     else if(((temp[0]<='z' && temp[0]>='a')||(temp[0]<='Z' && temp[0]>='A')) && symtab.find(temp+":")==symtab.end())//if label is used after mnemonic then insert in map
                         symtab[temp+":"]=-1; //new label found
                     else if(((temp[0]<='z' && temp[0]>='a')||(temp[0]<='Z' && temp[0]>='A') )&& symtab.find(temp+":")!=symtab.end())
                     {
-                        current_line++; //label already in table
+                        current_line++;PC++; //label already in table
                         continue;
                     }
                     else if(((temp[0]=='-' || temp[0]=='+') && isdigits(temp.substr(1,temp.length())))||isdigits(temp))//literal table
                         litab.pb({temp,literal_counter++}); // is a number
                     else
                     {
-                        string error="ERROR:Wrong Syntax at line "; error+=current_line+'0';
+                        string error="ERROR:Wrong Syntax at line "; error+=to_string(current_line);
                         errors.pb(error);
                     }
                 }
             }
             else
             {
-                string error="ERROR:Wrong Syntax at line "; error+=current_line+'0';
+                string error="ERROR:Wrong Syntax at line "; error+=to_string(current_line);
                 errors.pb(error);
             } // Here checking ends
         }
@@ -214,9 +219,9 @@ int main()
             string temp1="";temp1=sep(s);
             if(temp1.length()>0) 
             {
-                string error="ERROR:Extra operand at line "; error+=current_line+'0';
+                string error="ERROR:Extra operand at line "; error+=to_string(current_line);
                 errors.pb(error);
-                current_line++;
+                current_line++;PC++;
                 continue;
             } // Here checking ends
 
@@ -224,9 +229,9 @@ int main()
             {
                 if(temp.length()>0)
                 {
-                    string error="ERROR:Extra Operand at line "; error+=current_line+'0';
+                    string error="ERROR:Extra Operand at line "; error+=to_string(current_line);
                     errors.pb(error);
-                    current_line++;
+                    current_line++;PC++;
                     continue;
                 }
             }
@@ -234,41 +239,41 @@ int main()
             {
                 if(temp.length()==0)
                 {
-                    string error="ERROR:Missing operand at line "; error+=current_line+'0';
+                    string error="ERROR:Missing operand at line "; error+=to_string(current_line);
                     errors.pb(error);
                 }
                 else if(islabel(temp))
                 {
-                    string error="ERROR:Label declared after mnemonic"; error+=current_line+'0';
+                    string error="ERROR:Label declared after mnemonic"; error+=to_string(current_line);
                     errors.pb(error);
                 }
                 else if(((temp[0]<='z' && temp[0]>='a')||(temp[0]<='Z' && temp[0]>='A')) && symtab.find(temp+":")==symtab.end())//if label is used after mnemonic then insert in map
                     symtab[temp+":"]=-1; // new label found
                 else if(((temp[0]<='z' && temp[0]>='a')||(temp[0]<='Z' && temp[0]>='A') )&& symtab.find(temp+":")!=symtab.end())
                 {
-                    current_line++; //label already in table
+                    current_line++;PC++; //label already in table
                     continue;
                 }
                 else if(((temp[0]=='-' || temp[0]=='+') && isdigits(temp.substr(1,temp.length())))||isdigits(temp))//literal table
                     litab.pb({temp,literal_counter++}); // is a number
                 else
                 {
-                    string error="ERROR:Wrong Syntax at line "; error+=current_line+'0';
+                    string error="ERROR:Wrong Syntax at line "; error+=to_string(current_line);
                     errors.pb(error);
                 }
             }
         }
         else
         {
-            string error="ERROR:Wrong Syntax at line "; error+=current_line+'0';
+            string error="ERROR:Wrong Syntax at line "; error+=to_string(current_line);
             errors.pb(error);
         }
-        current_line++;
+        current_line++;PC++;
     }
     for(auto it:symtab)
         if(it.second==-1)
         {
-            string error="ERROR:Undeclared label";errors.pb(error);
+            string error="ERROR:Undeclared label "+it.first.substr(0,it.first.length()-1);errors.pb(error);
         }
     cout<<"symbol table"<<endl;
     for(auto it:symtab)

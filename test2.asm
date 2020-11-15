@@ -2,9 +2,11 @@
 ; Test error handling
 label:
 label: ; duplicate label definiton
+ldc 1
 br nonesuch ; no such label
 ldc 08ge ; not a number
 ldc ; missing operand
+label:
 add 5 ; unexpected operand
 ldc 5, 6; extra on end of line
 0def: ; bogus label name
