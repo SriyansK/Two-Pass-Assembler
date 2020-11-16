@@ -21,6 +21,14 @@ bool islabel(string label)
     return false;
 }
 
+struct code_listing
+{
+    string label="";
+    string mne="";
+    string opera="";
+    int pc;
+};
+
 bool ismnemonic(string operand,unordered_map <string,int> mnemonic)
 {
     if(mnemonic.find(operand)==mnemonic.end())
@@ -32,7 +40,7 @@ bool one_operand(string temp)
 {
     unordered_map <string,int> ump;
     ump["data"]=-2,ump["ldc"]=0,ump["adc"]=1,ump["ldl"]=2,ump["stl"]=3,ump["ldnl"]=4,ump["stnl"]=5,ump["10"]=6,ump["call"]=13;
-    ump["brz"]=15,ump["brlz"]=16,ump["br"]=17,ump["SET"]=-4;
+    ump["brz"]=15,ump["brlz"]=16,ump["br"]=17,ump["SET"]=-4,ump["adj"]=10;
     if(ump.find(temp)!=ump.end())
         return true;
     return false;
@@ -91,10 +99,12 @@ bool isdigits(string temp)
 int main()
 {
     fstream input_file;
-    input_file.open("test3.asm",ios::in);
+    input_file.open("test4.txt",ios::in);
 
+    int line=0;
     vector <string> code; // remove bogus lines and comments and store it in code
     vector <string> errors; //stores the errors
+    vector <code_listing> sep_code; //stores each type of string seprately
     if(input_file.is_open())
     {
         string temp;
@@ -118,7 +128,6 @@ int main()
         errors.pb(error);
         return 0;
     }
-
     //mnemonic table
     unordered_map <string,int> mnemonic;
     mnemonic["data"]=-2,mnemonic["ldc"]=0,mnemonic["adc"]=1,mnemonic["ldl"]=2,mnemonic["stl"]=3,mnemonic["ldnl"]=4;
@@ -130,7 +139,8 @@ int main()
     vector<pair<string,int>>  litab; // literal table 1st is value and 2nd is address
     for(string s:code) // Here we make symbol table and literal table
     {
-        pos=0;
+        struct code_listing temp_code;
+        pos=0;temp_code.pc=PC;
         string temp=sep(s);
         if(temp=="")
         {
@@ -139,6 +149,7 @@ int main()
         }
         if(islabel(temp)) //If label the 1st string is a label
         {
+            temp_code.label=temp;
             if(symtab.find(temp)==symtab.end()) // Here we add labels to symbol table
                 symtab[temp]=PC;
             else if(symtab.find(temp)!=symtab.end() && symtab[temp]!=-1)
@@ -152,11 +163,13 @@ int main()
             temp="";temp=sep(s); // here we check 2nd string
             if(temp.length()==0)
             {
+                sep_code.pb(temp_code);
                 current_line++;
                 continue;
             }
             else if(ismnemonic(temp,mnemonic)) 
             {
+                temp_code.mne=temp;
                 string mnemo=temp;//store mnemonic in string
                 temp="";temp=sep(s); // Here we check if there are more than 1 operand
                 string temp1="";temp1=sep(s);
@@ -180,6 +193,7 @@ int main()
                 }
                 else if(one_operand(mnemo))
                 {
+                    temp_code.opera=temp;
                     if(temp.length()==0)
                     {
                         string error="ERROR:Missing operand at line "; error+=to_string(current_line);
@@ -194,6 +208,7 @@ int main()
                         symtab[temp+":"]=-1; //new label found
                     else if(((temp[0]<='z' && temp[0]>='a')||(temp[0]<='Z' && temp[0]>='A') )&& symtab.find(temp+":")!=symtab.end())
                     {
+                        sep_code.pb(temp_code);
                         current_line++;PC++; //label already in table
                         continue;
                     }
@@ -214,6 +229,7 @@ int main()
         }
         else if(ismnemonic(temp,mnemonic)) // If Mnemonic
         {
+            temp_code.mne=temp;
             string mnemo=temp;//store mnemonic in string
             temp="";temp=sep(s); // Here we check if there are more than 1 operand
             string temp1="";temp1=sep(s);
@@ -237,6 +253,7 @@ int main()
             }
             else if(one_operand(mnemo))
             {
+                temp_code.opera=temp;
                 if(temp.length()==0)
                 {
                     string error="ERROR:Missing operand at line "; error+=to_string(current_line);
@@ -251,6 +268,7 @@ int main()
                     symtab[temp+":"]=-1; // new label found
                 else if(((temp[0]<='z' && temp[0]>='a')||(temp[0]<='Z' && temp[0]>='A') )&& symtab.find(temp+":")!=symtab.end())
                 {
+                    sep_code.pb(temp_code);
                     current_line++;PC++; //label already in table
                     continue;
                 }
@@ -267,7 +285,8 @@ int main()
         {
             string error="ERROR:Wrong Syntax at line "; error+=to_string(current_line);
             errors.pb(error);
-        }
+        }                                                                                                                              
+        sep_code.pb(temp_code);
         current_line++;PC++;
     }
     for(auto it:symtab)
@@ -275,12 +294,6 @@ int main()
         {
             string error="ERROR:Undeclared label "+it.first.substr(0,it.first.length()-1);errors.pb(error);
         }
-    cout<<"symbol table"<<endl;
-    for(auto it:symtab)
-        cout<<it.first<<" "<<it.second<<endl;
-    for(auto it:errors)
-        cout<<it<<endl;
-    cout<<"literal table"<<endl;
-    for(auto it:litab)
-        cout<<it.first<<" "<<it.second<<endl;
+    for(auto it:sep_code)
+        cout<<it.label<<" "<<it.mne<<" "<<it.opera<<" "<<it.pc<<endl;
 }
