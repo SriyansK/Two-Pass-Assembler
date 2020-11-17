@@ -13,14 +13,6 @@ int pos;
 int current_line=0,literal_counter=10000,PC=0;
 
 //convert to decimal 
-
-bool islabel(string label)
-{
-    if(label[label.length()-1]==':' && ((label[0]<='z' && label[0]>='a')||(label[0]<='Z' && label[0]>='A')))
-        return true;
-    return false;
-}
-
 struct code_listing
 {
     string label="";
@@ -29,6 +21,42 @@ struct code_listing
     int pc;
 };
 
+bool isdecimal(string value)
+{
+    if(value[0]=='-' || value[0]=='+')
+        value=value.substr(1,value.length());
+    if(value[0]=='0' && value.length()==1)
+        return true;
+    else if(value[0]=='0' && value.length()>1)
+        return false;
+    for(char c:value) // dec
+        if(!isdigit(c))
+            return false;
+    return true;
+}
+
+bool isoctal(string value)
+{
+    if(value[0]=='0')
+    {
+        for(char c:value)
+            if(c<='7' && c>='0')
+                continue;
+            else
+                return false;
+    }
+    else
+        return false;
+    return true;
+}
+
+bool islabel(string label)
+{
+    if(label[label.length()-1]==':' && ((label[0]<='z' && label[0]>='a')||(label[0]<='Z' && label[0]>='A')))
+        return true;
+    return false;
+}
+
 bool ismnemonic(string operand,unordered_map <string,int> mnemonic)
 {
     if(mnemonic.find(operand)==mnemonic.end())
@@ -36,10 +64,19 @@ bool ismnemonic(string operand,unordered_map <string,int> mnemonic)
     return true;
 }
 
+bool mnemonic_type_value(string mne)
+{
+    unordered_map<string,int> value_map;
+    value_map["data"]=1,value_map["ldc"]=1,value_map["adc"]=1,value_map["adj"]=1,value_map["SET"]=1;
+    if(value_map.find(mne)!=value_map.end())
+        return true;
+    return false;
+}
+
 bool one_operand(string temp)
 {
     unordered_map <string,int> ump;
-    ump["data"]=-2,ump["ldc"]=0,ump["adc"]=1,ump["ldl"]=2,ump["stl"]=3,ump["ldnl"]=4,ump["stnl"]=5,ump["10"]=6,ump["call"]=13;
+    ump["data"]=19,ump["ldc"]=0,ump["adc"]=1,ump["ldl"]=2,ump["stl"]=3,ump["ldnl"]=4,ump["stnl"]=5,ump["10"]=6,ump["call"]=13;
     ump["brz"]=15,ump["brlz"]=16,ump["br"]=17,ump["SET"]=-4,ump["adj"]=10;
     if(ump.find(temp)!=ump.end())
         return true;
@@ -81,7 +118,7 @@ string sep(string s)
 
 bool isdigits(string temp)
 {
-    if(temp[0] == '0' && temp[1]== 'x')
+    if(temp[0] == '0' && temp[1]== 'x') //hex
     {
         for(int i=2;i<temp.length();i++)
             if(isdigit(temp[i])||(temp[i]<='f' && temp[i]>='a')||(temp[i]<='F' && temp[i]>='A'))
@@ -90,7 +127,19 @@ bool isdigits(string temp)
                 return false;
         return true;
     }
-    for(char c:temp)
+    if(temp[0]=='0' && temp.length()==1) //string temp="0";
+        return true;
+    if(temp[0]=='0') // octa
+    {
+        for(int i=1;i<temp.length();i++)
+            if(temp[i]<='7' && temp[i]>='0')
+                continue;
+            else
+                return false;
+        return true;
+    }
+    
+    for(char c:temp) // dec
         if(!isdigit(c))
             return false;
     return true;
@@ -130,10 +179,10 @@ int main()
     }
     //mnemonic table
     unordered_map <string,int> mnemonic;
-    mnemonic["data"]=-2,mnemonic["ldc"]=0,mnemonic["adc"]=1,mnemonic["ldl"]=2,mnemonic["stl"]=3,mnemonic["ldnl"]=4;
+    mnemonic["data"]=19,mnemonic["ldc"]=0,mnemonic["adc"]=1,mnemonic["ldl"]=2,mnemonic["stl"]=3,mnemonic["ldnl"]=4;
     mnemonic["stnl"]=5,mnemonic["add"]=6,mnemonic["sub"]=7,mnemonic["shl"]=8,mnemonic["shr"]=9,mnemonic["adj"]=10;
-    mnemonic["a2sp"]=11,mnemonic["s2pa"]=12,mnemonic["call"]=13,mnemonic["return"]=14,mnemonic["brz"]=15,mnemonic["brlz"]=16;
-    mnemonic["br"]=17,mnemonic["HALT"]=18,mnemonic["SET"]=-4;
+    mnemonic["a2sp"]=11,mnemonic["sp2a"]=12,mnemonic["call"]=13,mnemonic["return"]=14,mnemonic["brz"]=15,mnemonic["brlz"]=16;
+    mnemonic["br"]=17,mnemonic["HALT"]=18,mnemonic["SET"]=20;
 
     unordered_map<string,int>  symtab; //symbol table
     vector<pair<string,int>>  litab; // literal table 1st is value and 2nd is address
@@ -294,6 +343,119 @@ int main()
         {
             string error="ERROR:Undeclared label "+it.first.substr(0,it.first.length()-1);errors.pb(error);
         }
+    unordered_map<string,int> data;
     for(auto it:sep_code)
-        cout<<it.label<<" "<<it.mne<<" "<<it.opera<<" "<<it.pc<<endl;
+        if(it.mne=="data" && it.label!="")
+            data[it.label]=1;
+    //pass 1 complete
+
+    if(errors.size()>0)
+        return 0;
+
+    //pass 2 start
+
+    //listing file
+    ofstream listing_file;
+    listing_file.open("listing_file.txt");
+    vector <string> machine_code;
+    for(auto it:sep_code)
+    {
+        stringstream ss;// adding PC to listing file
+        ss<<hex<<it.pc;
+        string res(ss.str());
+        int len=res.length();
+        for(int i=0;i<8-len;i++)
+            listing_file<<"0";
+        listing_file<<res<<" ";
+        if(it.mne!="") //check if mnemonic
+        {
+            stringstream ss1;
+            ss1<<hex<<mnemonic[it.mne];
+            string res1(ss1.str());
+            if(zero_operand(it.mne)) // if zero type operand
+            {
+                for(int i=0;i<8-res1.length();i++)
+                    listing_file<<"0";
+                listing_file<<res1<<" ";
+            }
+            else // if one type operand
+            {
+                if(isdigits(it.opera)) // is a number
+                {
+                    if(isdecimal(it.opera))
+                    {
+
+                    }
+                    else if(isoctal(it.opera))
+                    {
+
+                    }
+                    else
+                    {
+                        for(int i=0;i<6-it.opera.length();i++)
+                            listing_file<<"0";
+                        listing_file<<it.opera;
+                        for(int i=0;i<2-res1.length();i++)
+                            listing_file<<"0";
+                        listing_file<<res1<<" ";
+                    }
+                }
+                else if(data.find(it.opera+":")!=data.end()) // is a variable
+                {
+                    stringstream ss2;
+                    ss2<<hex<<symtab[it.opera+":"];
+                    string res2(ss2.str());
+                    for(int i=0;i<6-res2.length();i++)
+                        listing_file<<"0";
+                    listing_file<<res2;
+                    for(int i=0;i<2-res1.length();i++)
+                        listing_file<<"0";
+                    listing_file<<res1<<" ";
+                }
+                else // is a label
+                {
+                    if(mnemonic_type_value(it.mne))
+                    {
+                        stringstream ss2;
+                        ss2<<hex<<(symtab[it.opera+":"]);
+                        string res2(ss2.str());
+                        for(int i=0;i<6-res2.length();i++)
+                            listing_file<<"0";
+                        listing_file<<res2;
+                        for(int i=0;i<2-res1.length();i++)
+                            listing_file<<"0";
+                        listing_file<<res1<<" ";
+                    }
+                    else
+                    {
+                        stringstream ss2;
+                        ss2<<hex<<(symtab[it.opera+":"]-it.pc-1);
+                        string res2(ss2.str());
+                        if(symtab[it.opera+":"]-it.pc-1<0)
+                            res2=res2.substr(2,res2.length());
+                        for(int i=0;i<6-res2.length();i++)
+                            listing_file<<"0";
+                        listing_file<<res2;
+                        for(int i=0;i<2-res1.length();i++)
+                            listing_file<<"0";
+                        listing_file<<res1<<" ";
+                    }
+                }
+            }
+        }
+        else // if no mnemonic then print spaces
+        {
+            for(int i=0;i<8;i++)
+                listing_file<<" ";
+        }
+
+        if(it.label!="")
+            listing_file<<it.label<<" ";
+        if(it.mne!="")
+            listing_file<<it.mne<<" ";
+        if(it.opera!="")
+            listing_file<<it.opera<<" ";
+        listing_file<<endl;
+    }
+    listing_file.close();
 }
