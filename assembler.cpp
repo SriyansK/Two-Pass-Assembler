@@ -148,7 +148,7 @@ bool isdigits(string temp)
 int main()
 {
     fstream input_file;
-    input_file.open("test4.txt",ios::in);
+    input_file.open("test1.txt",ios::in);
 
     int line=0;
     vector <string> code; // remove bogus lines and comments and store it in code
@@ -380,21 +380,47 @@ int main()
             }
             else // if one type operand
             {
-                if(isdigits(it.opera)) // is a number
+                if(isdigits(it.opera) || isdigits(it.opera.substr(1,it.opera.length()))) // is a number
                 {
+                    //cout<<it.opera<<endl;
                     if(isdecimal(it.opera))
                     {
-
+                        int decimal_digit=stoi(it.opera);
+                        stringstream ss2;
+                        ss2<<hex<<decimal_digit;
+                        string res2(ss2.str());
+                        if(decimal_digit<0)
+                            res2=res2.substr(2,res2.length());
+                        for(int i=0;i<6-res2.length();i++)
+                            listing_file<<"0";
+                        listing_file<<res2;
+                        for(int i=0;i<2-res1.length();i++)
+                        listing_file<<"0";
+                        listing_file<<res1<<" ";
                     }
                     else if(isoctal(it.opera))
                     {
+                        int decimal_value;
+                        stringstream ss2;
+                        ss2<<it.opera;
+                        ss2>>oct>>decimal_value;
 
+                        stringstream ss3;
+                        ss3<<hex<<decimal_value;
+                        string res2(ss3.str());
+                        for(int i=0;i<6-res2.length();i++)
+                            listing_file<<"0";
+                        listing_file<<res2;
+                        for(int i=0;i<2-res1.length();i++)
+                        listing_file<<"0";
+                        listing_file<<res1<<" ";
                     }
                     else
                     {
-                        for(int i=0;i<6-it.opera.length();i++)
+                        string hexa=it.opera.substr(2,it.opera.length());
+                        for(int i=0;i<6-hexa.length();i++)
                             listing_file<<"0";
-                        listing_file<<it.opera;
+                        listing_file<<hexa;
                         for(int i=0;i<2-res1.length();i++)
                             listing_file<<"0";
                         listing_file<<res1<<" ";
