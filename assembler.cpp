@@ -148,7 +148,7 @@ bool isdigits(string temp)
 int main()
 {
     fstream input_file;
-    input_file.open("test1.txt",ios::in);
+    input_file.open("test2.txt",ios::in);
 
     int line=0;
     vector <string> code; // remove bogus lines and comments and store it in code
@@ -348,9 +348,21 @@ int main()
         if(it.mne=="data" && it.label!="")
             data[it.label]=1;
     //pass 1 complete
-
     if(errors.size()>0)
+    {
+        //Log file
+        ofstream log_file;
+        log_file.open("log.txt");
+
+        int error_no=1;
+        for(auto it:errors)
+        {
+            log_file<<error_no<<". "<<it<<endl;
+            error_no++;
+        }
+        log_file.close();
         return 0;
+    }
 
     //pass 2 start
 
@@ -484,4 +496,5 @@ int main()
         listing_file<<endl;
     }
     listing_file.close();
+
 }

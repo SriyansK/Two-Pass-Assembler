@@ -1,0 +1,9 @@
+1. ERROR:Label Repeated at line 3
+2. ERROR:Wrong Syntax at line 5
+3. ERROR:Missing operand at line 6
+4. ERROR:Extra Operand at line 7
+5. ERROR:Extra operand at line 8
+6. ERROR:Wrong Syntax at line 9
+7. ERROR:Wrong Syntax at line 10
+8. ERROR:Wrong Syntax at line 11
+9. ERROR:Undeclared label nonesuch
