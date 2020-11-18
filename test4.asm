@@ -11,8 +11,7 @@
 ;
 main:   adj -3
         stl 1
-        stl 2
-	stl 
+        stl 2 
         ldc 0           ; zero accumulator
         stl 0
 loop:   adj -1
