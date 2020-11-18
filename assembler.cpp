@@ -145,10 +145,17 @@ bool isdigits(string temp)
     return true;
 }
 
-int main()
+int main(int argc,char** argv)
 {
+    string file_name="";
+    for(int i=0;i<strlen(argv[1]);i++)
+        if(argv[1][i]=='.')
+            break;
+        else
+            file_name+=argv[1][i];
     fstream input_file;
-    input_file.open("test2.txt",ios::in);
+    string input_file_name=file_name+".asm";
+    input_file.open(input_file_name,ios::in);
 
     int line=0;
     vector <string> code; // remove bogus lines and comments and store it in code
@@ -351,8 +358,9 @@ int main()
     if(errors.size()>0)
     {
         //Log file
+        string log_file_name=file_name+".log";
         ofstream log_file;
-        log_file.open("log.txt");
+        log_file.open(log_file_name);
 
         int error_no=1;
         for(auto it:errors)
@@ -367,8 +375,9 @@ int main()
     //pass 2 start
 
     //listing file
+    string listing_file_name=file_name+".l";
     ofstream listing_file;
-    listing_file.open("listing_file.txt");
+    listing_file.open(listing_file_name);
     vector <string> machine_code;
     for(auto it:sep_code)
     {
