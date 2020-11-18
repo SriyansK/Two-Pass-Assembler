@@ -174,7 +174,7 @@ int main(int argc,char** argv)
                 s+=c;
             }
             code.pb(s);
-            cout<<temp<<endl;
+            //cout<<temp<<endl;
         }
         input_file.close();
     }
@@ -355,24 +355,21 @@ int main(int argc,char** argv)
         if(it.mne=="data" && it.label!="")
             data[it.label]=1;
     //pass 1 complete
-    if(errors.size()>0)
-    {
-        //Log file
-        string log_file_name=file_name+".log";
-        ofstream log_file;
-        log_file.open(log_file_name);
-
-        int error_no=1;
-        for(auto it:errors)
-        {
-            log_file<<error_no<<". "<<it<<endl;
-            error_no++;
-        }
-        log_file.close();
-        return 0;
-    }
-
     //pass 2 start
+    //Log file
+    string log_file_name=file_name+".log";
+    ofstream log_file;
+    log_file.open(log_file_name);
+
+    int error_no=1;
+    for(auto it:errors)
+    {
+        log_file<<error_no<<". "<<it<<endl;
+        error_no++;
+    }
+    log_file.close();
+    if(errors.size()>0)
+        return 0;
 
     //listing file
     string listing_file_name=file_name+".l";
@@ -505,5 +502,4 @@ int main(int argc,char** argv)
         listing_file<<endl;
     }
     listing_file.close();
-
 }
