@@ -147,6 +147,11 @@ bool isdigits(string temp)
 
 int main(int argc,char** argv)
 {
+    if(argc!=2)
+    {
+        cout<<"Wrong Fomat : Please check Format :./asm filename.asm";
+        return 0;
+    }
     string file_name="";
     for(int i=0;i<strlen(argv[1]);i++)
         if(argv[1][i]=='.')
