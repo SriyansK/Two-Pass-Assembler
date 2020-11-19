@@ -516,7 +516,8 @@ int main()
             swap(c[i],c[i+1]);
     }
     
-    ofstream bin_file("test4.o",ios::out|ios::binary);
+    string bin_file_name="test4.o";
+    ofstream bin_file(bin_file_name,ios::out|ios::binary);
     int change_line=0;
     for(int i=0;i<machine_code.size();i++)
     {

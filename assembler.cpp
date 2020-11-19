@@ -531,7 +531,7 @@ int main(int argc,char** argv)
     }
 
     string bin_file_name=file_name+".o";
-    ofstream bin_file(file_name,ios::out|ios::binary);
+    ofstream bin_file(bin_file_name,ios::out|ios::binary);
     int change_line=0;
     for(int i=0;i<machine_code.size();i++)
     {
