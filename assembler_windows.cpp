@@ -516,4 +516,19 @@ int main()
             swap(c[i],c[i+1]);
     }
     
+    ofstream bin_file("test4.o",ios::out|ios::binary);
+    int change_line=0;
+    for(int i=0;i<machine_code.size();i++)
+    {
+        for(int j=0;j<4;j++)
+            bin_file<<machine_code[i][j];
+        bin_file<<" ";
+        for(int j=4;j<8;j++)
+            bin_file<<machine_code[i][j];
+        change_line++;
+        bin_file<<" ";
+        if(change_line%4==0)
+            bin_file<<endl;
+    }
+    bin_file.close();
 }
