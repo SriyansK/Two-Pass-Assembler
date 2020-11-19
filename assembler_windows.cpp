@@ -148,7 +148,7 @@ bool isdigits(string temp)
 int main()
 {
     fstream input_file;
-    input_file.open("test2.asm",ios::in);
+    input_file.open("test4.asm",ios::in);
 
     int line=0;
     vector <string> code; // remove bogus lines and comments and store it in code
@@ -493,4 +493,18 @@ int main()
         listing_file<<endl;
     }
     listing_file.close();
+    fstream machine_file;
+    machine_file.open("listing_file.l",ios::in);
+    if(machine_file.is_open())
+    {
+        string temp;
+        while(getline(machine_file,temp))
+        {
+            pos=0;
+            string s=sep(temp);
+            s="";s=sep(temp);
+            if(symtab.find(s)==symtab.end())
+                machine_code.pb(s);
+        }
+    }
 }

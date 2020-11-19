@@ -502,4 +502,20 @@ int main(int argc,char** argv)
         listing_file<<endl;
     }
     listing_file.close();
+    fstream machine_file;
+    machine_file.open(listing_file_name,ios::in);
+    if(machine_file.is_open())
+    {
+        string temp;
+        while(getline(machine_file,temp))
+        {
+            pos=0;
+            string s=sep(temp);
+            s="";s=sep(temp);
+            if(symtab.find(s)==symtab.end())
+                machine_code.pb(s);
+        }
+    }
+
+    
 }
