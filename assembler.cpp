@@ -372,7 +372,7 @@ int main(int argc,char** argv)
         return 0;
 
     //listing file
-    string listing_file_name=file_name+".l";
+    string listing_file_name=file_name+".lst";
     ofstream listing_file;
     listing_file.open(listing_file_name);
     vector <string> machine_code;
@@ -516,6 +516,12 @@ int main(int argc,char** argv)
                 machine_code.pb(s);
         }
     }
-
-    
+    machine_file.close();
+    for(auto &c:machine_code)
+    {
+        for(int i=0;i<4;i++)
+            swap(c[i],c[7-i]);
+        for(int i=0;i<8;i+=2)
+            swap(c[i],c[i+1]);
+    }
 }

@@ -365,7 +365,7 @@ int main()
 
     //listing file
     ofstream listing_file;
-    listing_file.open("listing_file.l");
+    listing_file.open("listing_file.lst");
     vector <string> machine_code;
     for(auto it:sep_code)
     {
@@ -494,7 +494,7 @@ int main()
     }
     listing_file.close();
     fstream machine_file;
-    machine_file.open("listing_file.l",ios::in);
+    machine_file.open("listing_file.lst",ios::in);
     if(machine_file.is_open())
     {
         string temp;
@@ -507,4 +507,13 @@ int main()
                 machine_code.pb(s);
         }
     }
+    machine_file.close();
+    for(auto &c:machine_code)
+    {
+        for(int i=0;i<4;i++)
+            swap(c[i],c[7-i]);
+        for(int i=0;i<8;i+=2)
+            swap(c[i],c[i+1]);
+    }
+    
 }
