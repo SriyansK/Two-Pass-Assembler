@@ -165,6 +165,7 @@ int main(int argc,char** argv)
     int line=0;
     vector <string> code; // remove bogus lines and comments and store it in code
     vector <string> errors; //stores the errors
+    vector <string> warnings; // stores warnings
     vector <code_listing> sep_code; //stores each type of string seprately
     if(input_file.is_open())
     {
@@ -224,6 +225,8 @@ int main(int argc,char** argv)
             temp="";temp=sep(s); // here we check 2nd string
             if(temp.length()==0)
             {
+                string warn="Warning: Unused Label at line ";warn+=to_string(current_line);
+                warnings.pb(warn);
                 sep_code.pb(temp_code);
                 current_line++;
                 continue;
@@ -379,6 +382,11 @@ int main(int argc,char** argv)
 
     int error_no=1;
     for(auto it:errors)
+    {
+        log_file<<error_no<<". "<<it<<endl;
+        error_no++;
+    }
+    for(auto it:warnings)
     {
         log_file<<error_no<<". "<<it<<endl;
         error_no++;

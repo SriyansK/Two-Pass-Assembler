@@ -148,11 +148,12 @@ bool isdigits(string temp)
 int main()
 {
     fstream input_file;
-    input_file.open("MyBubbleSort.asm",ios::in);
+    input_file.open("test4.asm",ios::in);
 
     int line=0;
     vector <string> code; // remove bogus lines and comments and store it in code
     vector <string> errors; //stores the errors
+    vector <string> warnings; //stores warnings
     vector <code_listing> sep_code; //stores each type of string seprately
     if(input_file.is_open())
     {
@@ -212,6 +213,8 @@ int main()
             temp="";temp=sep(s); // here we check 2nd string
             if(temp.length()==0)
             {
+                string warn="Warning: Unused Label at line ";warn+=to_string(current_line);
+                warnings.pb(warn);
                 sep_code.pb(temp_code);
                 current_line++;
                 continue;
@@ -366,6 +369,11 @@ int main()
 
     int error_no=1;
     for(auto it:errors)
+    {
+        log_file<<error_no<<". "<<it<<endl;
+        error_no++;
+    }
+    for(auto it:warnings)
     {
         log_file<<error_no<<". "<<it<<endl;
         error_no++;
@@ -549,7 +557,7 @@ int main()
     }
     machine_file.close();
     
-    string bin_file_name="MyBubbleSort.o";
+    string bin_file_name="test4.o";
     FILE* obj_ptr;
     obj_ptr=fopen(bin_file_name.c_str(),"wb");
     int sz=machine_code.size();
