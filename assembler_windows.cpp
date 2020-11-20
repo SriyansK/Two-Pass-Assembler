@@ -148,7 +148,7 @@ bool isdigits(string temp)
 int main()
 {
     fstream input_file;
-    input_file.open("test4.asm",ios::in);
+    input_file.open("test.asm",ios::in);
 
     int line=0;
     vector <string> code; // remove bogus lines and comments and store it in code
@@ -517,19 +517,18 @@ int main()
     }
     
     string bin_file_name="test4.o";
-    ofstream bin_file(bin_file_name,ios::out|ios::binary);
-    int change_line=0;
-    for(int i=0;i<machine_code.size();i++)
+    FILE* obj_ptr;
+    obj_ptr=fopen(bin_file_name.c_str(),"wb");
+    int sz=machine_code.size();
+    int array_code[sz];
+    for(int i=0;i<sz;i++)
     {
-        for(int j=0;j<4;j++)
-            bin_file<<machine_code[i][j];
-        bin_file<<" ";
-        for(int j=4;j<8;j++)
-            bin_file<<machine_code[i][j];
-        change_line++;
-        bin_file<<" ";
-        if(change_line%4==0)
-            bin_file<<endl;
+        int decimal_code;
+        stringstream ss_value;
+        ss_value<<machine_code[i];
+        ss_value>>hex>>decimal_code;
+        array_code[i]=decimal_code;
     }
-    bin_file.close();
+    fwrite(array_code,sizeof(int),sz,obj_ptr);
+    fclose(obj_ptr);
 }
