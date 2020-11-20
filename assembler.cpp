@@ -423,8 +423,6 @@ int main(int argc,char** argv)
                         stringstream ss2;
                         ss2<<hex<<decimal_digit;
                         string res2(ss2.str());
-                        if(decimal_digit<0)
-                            res2=res2.substr(2,res2.length());
                         if(it.mne=="data" || it.mne=="SET")
                         {
                             for(int i=0;i<8-res2.length();i++)
@@ -433,6 +431,8 @@ int main(int argc,char** argv)
                         }
                         else
                         {
+                            if(decimal_digit<0)
+                                res2=res2.substr(2,res2.length());
                             for(int i=0;i<6-res2.length();i++)
                                 listing_file<<"0";
                             listing_file<<res2;

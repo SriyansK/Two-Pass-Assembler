@@ -148,7 +148,7 @@ bool isdigits(string temp)
 int main()
 {
     fstream input_file;
-    input_file.open("test4.asm",ios::in);
+    input_file.open("MyBubbleSort.asm",ios::in);
 
     int line=0;
     vector <string> code; // remove bogus lines and comments and store it in code
@@ -409,8 +409,6 @@ int main()
                         stringstream ss2;
                         ss2<<hex<<decimal_digit;
                         string res2(ss2.str());
-                        if(decimal_digit<0)
-                            res2=res2.substr(2,res2.length());
                         if(it.mne=="data" || it.mne=="SET")
                         {
                             for(int i=0;i<8-res2.length();i++)
@@ -419,6 +417,8 @@ int main()
                         }
                         else
                         {
+                            if(decimal_digit<0)
+                                res2=res2.substr(2,res2.length());
                             for(int i=0;i<6-res2.length();i++)
                                 listing_file<<"0";
                             listing_file<<res2;
@@ -549,7 +549,7 @@ int main()
     }
     machine_file.close();
     
-    string bin_file_name="test3.o";
+    string bin_file_name="MyBubbleSort.o";
     FILE* obj_ptr;
     obj_ptr=fopen(bin_file_name.c_str(),"wb");
     int sz=machine_code.size();
