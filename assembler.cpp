@@ -344,8 +344,16 @@ int main(int argc,char** argv)
         }
         else
         {
-            string error="ERROR:Wrong Syntax at line "; error+=to_string(current_line);
-            errors.pb(error);
+            if(temp[temp.length()-1]==':')
+            {
+                string error="ERROR:Wrong Format of label at line "; error+=to_string(current_line);
+                errors.pb(error);
+            }
+            else
+            {
+                string error="ERROR:Wrong Syntax at line "; error+=to_string(current_line);
+                errors.pb(error);
+            }  
         }                                                                                                                              
         sep_code.pb(temp_code);
         current_line++;PC++;
@@ -537,11 +545,11 @@ int main(int argc,char** argv)
     int array_code[sz];
     for(int i=0;i<sz;i++)
     {
-        int decimal_code;
+        unsigned int decimal_code;
         stringstream ss_value;
-        ss_value<<machine_code[i];
-        ss_value>>hex>>decimal_code;
-        array_code[i]=decimal_code;
+        ss_value<<hex<<machine_code[i];
+        ss_value>>decimal_code;
+        array_code[i]=static_cast<int>(decimal_code);
     }
     fwrite(array_code,sizeof(int),sz,obj_ptr);
     fclose(obj_ptr);

@@ -148,7 +148,7 @@ bool isdigits(string temp)
 int main()
 {
     fstream input_file;
-    input_file.open("test.asm",ios::in);
+    input_file.open("test4.asm",ios::in);
 
     int line=0;
     vector <string> code; // remove bogus lines and comments and store it in code
@@ -332,8 +332,16 @@ int main()
         }
         else
         {
-            string error="ERROR:Wrong Syntax at line "; error+=to_string(current_line);
-            errors.pb(error);
+            if(temp[temp.length()-1]==':')
+            {
+                string error="ERROR:Wrong Format of label at line "; error+=to_string(current_line);
+                errors.pb(error);
+            }
+            else
+            {
+                string error="ERROR:Wrong Syntax at line "; error+=to_string(current_line);
+                errors.pb(error);
+            }  
         }                                                                                                                              
         sep_code.pb(temp_code);
         current_line++;PC++;
@@ -508,13 +516,6 @@ int main()
         }
     }
     machine_file.close();
-    for(auto &c:machine_code)
-    {
-        for(int i=0;i<4;i++)
-            swap(c[i],c[7-i]);
-        for(int i=0;i<8;i+=2)
-            swap(c[i],c[i+1]);
-    }
     
     string bin_file_name="test4.o";
     FILE* obj_ptr;
@@ -523,11 +524,11 @@ int main()
     int array_code[sz];
     for(int i=0;i<sz;i++)
     {
-        int decimal_code;
+        unsigned int decimal_code;
         stringstream ss_value;
-        ss_value<<machine_code[i];
-        ss_value>>hex>>decimal_code;
-        array_code[i]=decimal_code;
+        ss_value<<hex<<machine_code[i];
+        ss_value>>decimal_code;
+        array_code[i]=static_cast<int>(decimal_code);
     }
     fwrite(array_code,sizeof(int),sz,obj_ptr);
     fclose(obj_ptr);
