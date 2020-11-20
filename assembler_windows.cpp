@@ -353,8 +353,11 @@ int main()
         }
     unordered_map<string,int> data;
     for(auto it:sep_code)
-        if(it.mne=="data" && it.label!="")
-            data[it.label]=1;
+        if((it.mne=="data" || it.mne=="SET") && it.label!="")
+            if(it.mne=="data")
+                data[it.label]=1;
+            else
+                data[it.label]=2;
     //pass 1 complete
     //pass 2 start
     //Log file
@@ -408,12 +411,21 @@ int main()
                         string res2(ss2.str());
                         if(decimal_digit<0)
                             res2=res2.substr(2,res2.length());
-                        for(int i=0;i<6-res2.length();i++)
-                            listing_file<<"0";
-                        listing_file<<res2;
-                        for(int i=0;i<2-res1.length();i++)
-                        listing_file<<"0";
-                        listing_file<<res1<<" ";
+                        if(it.mne=="data" || it.mne=="SET")
+                        {
+                            for(int i=0;i<8-res2.length();i++)
+                                listing_file<<"0";
+                            listing_file<<res2<<" ";
+                        }
+                        else
+                        {
+                            for(int i=0;i<6-res2.length();i++)
+                                listing_file<<"0";
+                            listing_file<<res2;
+                            for(int i=0;i<2-res1.length();i++)
+                                listing_file<<"0";
+                            listing_file<<res1<<" ";
+                        }
                     }
                     else if(isoctal(it.opera))
                     {
@@ -425,22 +437,42 @@ int main()
                         stringstream ss3;
                         ss3<<hex<<decimal_value;
                         string res2(ss3.str());
-                        for(int i=0;i<6-res2.length();i++)
-                            listing_file<<"0";
-                        listing_file<<res2;
-                        for(int i=0;i<2-res1.length();i++)
-                        listing_file<<"0";
-                        listing_file<<res1<<" ";
+                        
+                        if(it.mne=="data" || it.mne=="SET")
+                        {
+                            for(int i=0;i<8-res2.length();i++)
+                                listing_file<<"0";
+                            listing_file<<res2<<" ";
+                        }
+                        else
+                        {
+                            for(int i=0;i<6-res2.length();i++)
+                                listing_file<<"0";
+                            listing_file<<res2;
+                            for(int i=0;i<2-res1.length();i++)
+                                listing_file<<"0";
+                            listing_file<<res1<<" ";   
+                        }
                     }
                     else
                     {
                         string hexa=it.opera.substr(2,it.opera.length());
-                        for(int i=0;i<6-hexa.length();i++)
-                            listing_file<<"0";
-                        listing_file<<hexa;
-                        for(int i=0;i<2-res1.length();i++)
-                            listing_file<<"0";
-                        listing_file<<res1<<" ";
+
+                        if(it.mne=="data" || it.mne=="SET")
+                        {
+                            for(int i=0;i<8-hexa.length();i++)
+                                listing_file<<"0";
+                            listing_file<<hexa<<" ";
+                        }
+                        else
+                        {
+                            for(int i=0;i<6-hexa.length();i++)
+                                listing_file<<"0";
+                            listing_file<<hexa;
+                            for(int i=0;i<2-res1.length();i++)
+                                listing_file<<"0";
+                            listing_file<<res1<<" ";   
+                        }
                     }
                 }
                 else if(data.find(it.opera+":")!=data.end()) // is a variable
@@ -517,7 +549,7 @@ int main()
     }
     machine_file.close();
     
-    string bin_file_name="test4.o";
+    string bin_file_name="test3.o";
     FILE* obj_ptr;
     obj_ptr=fopen(bin_file_name.c_str(),"wb");
     int sz=machine_code.size();
