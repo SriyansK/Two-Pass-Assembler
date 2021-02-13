@@ -1,4 +1,4 @@
-; test2.asm
+; test1.asm
 ; Test error handling
 label:
 label: ; duplicate label definiton
