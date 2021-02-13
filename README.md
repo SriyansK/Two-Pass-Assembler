@@ -1,4 +1,4 @@
-#Two Pass Assembler
+##Two Pass Assembler
 
 The aim of this project is to write a two pass assembler for an extended SIMPLE
 instruction set.
