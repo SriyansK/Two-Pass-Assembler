@@ -1,13 +1,6 @@
 /*
 Name : Sriyans
-Roll No : 1801cs52
-Batch : 2018-2022
-Branch : CSE IITP
-Course : CS322/321
-
-I here by declare that this cpp file is completely writen by me without any external help and completely belongs to me.
-This is a two pass assembler given as a project for the course cs322/cs321.
-
+Two Pass Assembler
 */
 
 #include <bits/stdc++.h>
@@ -602,4 +595,5 @@ int main(int argc,char** argv)
     }
     fwrite(array_code,sizeof(int),sz,obj_ptr);
     fclose(obj_ptr);
+    return 0;
 }
