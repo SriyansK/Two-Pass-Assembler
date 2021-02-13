@@ -1,88 +1,41 @@
-# Project Title
+#Two Pass Assembler
 
-One Paragraph of project description goes here
+The aim of this project is to write a two pass assembler for an extended SIMPLE
+instruction set.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+Just download the asm.cpp file and some test cases.
+Note : Execution Procedure described below.
 
-### Prerequisites
+## Execution Procedure
 
-What things you need to install the software and how to install them
+g++ asm.cpp -o asm
+./asm filename
 
-```
-Give examples
-```
+## Instruction Set
+Instruction Set
 
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+Mnemonic	Opcode	Operand	Formal Specifications	Description
+data		value		Reserve a memory location, initialized to the value specified
+ldc	0	value	B := A; A := value;	Load accumulator with the value specified
+adc	1	value	A := A + value;	Add the value specified to the accumulator
+ldl	2	offset	B := A; A := memory[SP + offset];	Load local
+stl	3	offset	memory[SP + offset] := A; A := B;	Store local
+ldnl	4	offset	A := memory[A + offset];	Load non-local
+stnl	5	offset	memory[A + offset] := B;	Store non-local
+add	6		A := B + A;	Addition
+sub	7		A := B - A;	Subtraction
+shl	8		A := B << A;	Shift left
+shr	9		A := B >> A;	Shift right
+adj	10	value	SP := SP + value;	Adjust SP
+a2sp	11		SP := A; A := B;	Transfer A to SP
+sp2a	12		B := A; A := SP;	Transfer SP to A
+call	13	offset	B := A; A := PC; PC := PC + offset;	Call procedure
+return	14		PC := A; A := B;	Return from procedure
+brz	15	offset	if A == 0 then PC := PC + offset;	If accumulator is zero, branch to specified offset
+brlz	16	offset	if A < 0 then PC := PC + offset;	If accumulator is less than zero, branch to specified offset
+br	17	offset	PC := PC + offset;
+HALT	18			Stop the emulator.
+SET	19	value		Set the label on this line to the specified value (rather than the PC). This is an optional extension, for which additional marks are available.
 
