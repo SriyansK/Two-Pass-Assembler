@@ -1,4 +1,4 @@
-##Two Pass Assembler with Compilation Error Detection
+## Two Pass Assembler with Compilation Error Detection
 
 The aim of this project is to write a two pass assembler for an extended SIMPLE
 instruction set. It creates an object file for assembly code.
