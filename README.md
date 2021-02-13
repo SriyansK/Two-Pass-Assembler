@@ -1,7 +1,7 @@
 ##Two Pass Assembler
 
 The aim of this project is to write a two pass assembler for an extended SIMPLE
-instruction set.
+instruction set. It creates an object file for assembly code.
 
 ## Getting Started
 
