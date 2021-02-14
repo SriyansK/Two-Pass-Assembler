@@ -23,4 +23,4 @@ g++ asm.cpp -o asm
 .o : object file.<br/>
 
 test1.asm : There are several errors in assembly code so it gives the list of error in .log file.<br />
-test2.asm : It asssembles the code and create three files, .log , .o and .lst <br />.
+test2.asm : It asssembles the code and create three files, .log , .o and .lst . <br />
